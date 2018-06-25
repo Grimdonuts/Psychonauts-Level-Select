@@ -42,14 +42,13 @@ namespace LevelSelect.UI
         {
          
                 LevelSelectSettings levelSettings = new LevelSelectSettings();
-                levelSettings.Show();
+                levelSettings.ShowDialog();
 
             //var fileContents = File.ReadAllLines("C:/Program Files (x86)/Steam/steamapps/common/Psychonauts/Profiles/Profile 2/SavedGame0");
             //fileContents[1] = LevelSelectModel.Levels.FirstOrDefault(x=> x.Value == comboBox.SelectedValue.ToString()).Key;
             //File.WriteAllLines("C:/Program Files (x86)/Steam/steamapps/common/Psychonauts/Profiles/Profile 2/SavedGame0", fileContents);
         }
-
-        public LevelSelectModel LevelSelect { get; set; }
+    
 
         private HwndSource _source;
         private const int HOTKEY_ID = 9000;
