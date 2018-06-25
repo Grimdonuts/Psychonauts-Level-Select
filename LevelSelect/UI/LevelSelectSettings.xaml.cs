@@ -23,7 +23,7 @@ namespace LevelSelect.UI
     /// </summary>
     public partial class LevelSelectSettings : Window
     {
-        public LevelSelectSettings()
+        public LevelSelectSettings(List<string> _levelHotkeys)
         {
             InitializeComponent();
 
@@ -55,7 +55,6 @@ namespace LevelSelect.UI
             XmlDocument doc = new XmlDocument();
             try
             {
-                bool exists = false;
                 doc.Load("Settings.xml");
                 XmlNodeList hotkeysList = doc.GetElementsByTagName("Hotkey");
 
@@ -84,25 +83,44 @@ namespace LevelSelect.UI
                 textBox12.Text = hotkeysList[11].Attributes["key"].InnerText;
                 comboBox12.SelectedItem = hotkeysList[11].Attributes["level"].InnerText;
 
-                LevelHotkeys = new List<string>();
-                LevelHotkeys.Add(hotkeysList[0].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[1].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[2].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[3].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[4].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[5].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[6].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[7].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[8].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[9].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[10].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[11].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[12].Attributes["key"].InnerText);
-
+                if (!_levelHotkeys.Any())
+                {
+                    LevelHotkeys = new List<string>();
+                    LevelHotkeys.Add(hotkeysList[0].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[1].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[2].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[3].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[4].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[5].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[6].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[7].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[8].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[9].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[10].Attributes["key"].InnerText);
+                    LevelHotkeys.Add(hotkeysList[11].Attributes["key"].InnerText);
+                }
+                else
+                {
+                    LevelHotkeys = _levelHotkeys;
+                }
             }
             // keep blank to prevent crash on empty file or not enough elements found
             catch
             {
+                    LevelHotkeys = new List<string>();
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
+                    LevelHotkeys.Add("Press a Key");
 
             }
 
@@ -173,6 +191,7 @@ namespace LevelSelect.UI
             XmlWriter writer = XmlWriter.Create("Settings.xml", settings);
             doc.Save(writer);
             writer.Close();
+
             this.Close();
 
         }
