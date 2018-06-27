@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <Hotkey key="F1" level="Basic Braining 1" />
+  <Hotkey key="F3" level="Basic Braining 2" />
+  <Hotkey key="F2" level="Basic Braining Finale" />
+  <Hotkey key="F4" level="Sasha's Shooting Gallery" />
+  <Hotkey key="F5" level="Brain Tumbler Experiment Woods" />
+  <Hotkey key="F6" level="Brain Tank" />
+  <Hotkey key="F7" level="Brain Tank Final" />
+  <Hotkey key="F8" level="Milla's Lounge" />
+  <Hotkey key="F9" level="Milla's Race" />
+  <Hotkey key="F10" level="Milla's Fan Room" />
+  <Hotkey key="F11" level="Lungfishopolis" />
+  <Hotkey key="F12" level="Lungfish Kochamara" />
+  <File filename="SavedGame1" filepath="C:\Program Files (x86)\Steam\steamapps\common\Psychonauts\Profiles\Profile 2\SavedGame1" />
+</Settings>
