@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,26 +33,62 @@ namespace LevelSelect.UI
         public LevelSelector()
         {
             InitializeComponent();
-
+            levelSelectModel = new LevelSelectModel();
             LoadFromFile();
 
-            if (LevelHotkeys[0] != "Press a Key")
+            if (LevelSettingsHotkeys[0] != "Press a Key")
             {
-                comboBox.SelectedItem = HotkeyedLevels[0];
-                label1.Content = "Hotkey: " + LevelHotkeys[0];
+                comboBox.SelectedItem = HotkeyedSettingsLevels[0];
+                label1.Content = "Hotkey: " + LevelSettingsHotkeys[0];
             }
 
             comboBox.ItemsSource = LevelSelectModel.Levels.Values;
             comboBox.SelectedIndex = 0;
+
+            lblFile.Content = lblFile.Content = "Currently Selected File: " + levelSelectModel.fileName;
+
+            if (levelSelectModel.fileName == "Pick a File in Settings")
+            {
+                btnSave.IsEnabled = false;
+            }
+            _hookID = SetHook(_proc);
+           // UnhookWindowsHookEx(_hookID);
         }
 
-        public List<string> LevelHotkeys { get; set; }
-        public List<string> HotkeyedLevels { get; set; }
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+
+            LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+
+            IntPtr wParam, IntPtr lParam);
+
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        public static LevelSelectModel levelSelectModel { get; set; }
+        public static List<string> LevelSettingsHotkeys { get; set; }
+        public static List<string> HotkeyedSettingsLevels { get; set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            LevelSelectSettings levelSettings = new LevelSelectSettings(LevelHotkeys);
+            
+            levelSelectModel.LevelHotkeys = LevelSettingsHotkeys;
+            LevelSelectSettings levelSettings = new LevelSelectSettings(levelSelectModel);
             levelSettings.Closed += LevelSettingsClosed;
             levelSettings.ShowDialog();
 
@@ -63,6 +100,17 @@ namespace LevelSelect.UI
         public void LevelSettingsClosed(object sender, System.EventArgs e)
         {
             LoadFromFile();
+            lblFile.Content = "Currently Selected File: " + levelSelectModel.fileName;
+            int index = HotkeyedSettingsLevels.IndexOf(comboBox.SelectedItem.ToString());
+            if (index != -1)
+            {
+                label1.Content = "Hotkey: " + LevelSettingsHotkeys[index];
+            }
+            else
+            {
+                label1.Content = "Hotkey: None";
+            }
+
         }
 
         public void LoadFromFile()
@@ -71,96 +119,150 @@ namespace LevelSelect.UI
             try
             {
                 doc.Load("Settings.xml");
+
                 XmlNodeList hotkeysList = doc.GetElementsByTagName("Hotkey");
 
-                LevelHotkeys = new List<string>();
-                LevelHotkeys.Add(hotkeysList[0].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[1].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[2].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[3].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[4].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[5].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[6].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[7].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[8].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[9].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[10].Attributes["key"].InnerText);
-                LevelHotkeys.Add(hotkeysList[11].Attributes["key"].InnerText);
+                LevelSettingsHotkeys = new List<string>();
+                LevelSettingsHotkeys.Add(hotkeysList[0].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[1].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[2].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[3].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[4].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[5].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[6].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[7].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[8].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[9].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[10].Attributes["key"].InnerText);
+                LevelSettingsHotkeys.Add(hotkeysList[11].Attributes["key"].InnerText);
 
-                HotkeyedLevels = new List<string>();
-                HotkeyedLevels.Add(hotkeysList[0].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[1].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[2].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[3].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[4].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[5].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[6].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[7].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[8].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[9].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[10].Attributes["level"].InnerText);
-                HotkeyedLevels.Add(hotkeysList[11].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels = new List<string>();
+                HotkeyedSettingsLevels.Add(hotkeysList[0].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[1].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[2].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[3].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[4].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[5].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[6].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[7].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[8].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[9].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[10].Attributes["level"].InnerText);
+                HotkeyedSettingsLevels.Add(hotkeysList[11].Attributes["level"].InnerText);
 
+                levelSelectModel.fileName = doc.GetElementsByTagName("File").Item(0).Attributes["filename"].InnerText;
+                levelSelectModel.filePath = doc.GetElementsByTagName("File").Item(0).Attributes["filepath"].InnerText;
             }
-            // keep blank to prevent crash on empty file or not enough elements found
             catch
             {
-
+                LevelSettingsHotkeys = new List<string>();
+                LevelSettingsHotkeys.Add("None");
+                HotkeyedSettingsLevels = new List<string>();
+                HotkeyedSettingsLevels.Add("Basic Braining 1");
+                try
+                {
+                    levelSelectModel.fileName = doc.GetElementsByTagName("File").Item(0).Attributes["filepath"].InnerText;
+                }
+                catch
+                {
+                    levelSelectModel.fileName = "Pick a File in Settings";
+                }
+                
             }
-        }
-
-        private HwndSource _source;
-        private const int HOTKEY_ID = 9000;
-
-
-        private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            const int WM_HOTKEY = 0x0312;
-            switch (msg)
-            {
-                case WM_HOTKEY:
-                    switch (wParam.ToInt32())
-                    {
-                        case HOTKEY_ID:
-                            OnHotKeyPressed();
-                            handled = true;
-                            break;
-                    }
-                    break;
-            }
-            return IntPtr.Zero;
-        }
-
-        private void OnHotKeyPressed()
-        {
-            // do stuff
-        }
-
-        private List<Key> _pressed = new List<Key>();
-
-        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (_pressed.Contains(e.Key)) return;
-            _pressed.Add(e.Key);
-
-        }
-
-        private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            _pressed.Remove(e.Key);
         }
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int index = HotkeyedLevels.IndexOf(comboBox.SelectedItem.ToString());
+            int index = HotkeyedSettingsLevels.IndexOf(comboBox.SelectedItem.ToString());
             if (index != -1)
             {
-                label1.Content = "Hotkey: " + LevelHotkeys[index];
+                label1.Content = "Hotkey: " + LevelSettingsHotkeys[index];
             }
             else
             {
                 label1.Content = "Hotkey: None";
             }
         }
+
+        private const int WH_KEYBOARD_LL = 13;
+
+        private const int WM_KEYDOWN = 0x0100;
+
+        private static LowLevelKeyboardProc _proc = HookCallback;
+
+        private static IntPtr _hookID = IntPtr.Zero;
+
+
+        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+
+        {
+
+            using (Process curProcess = Process.GetCurrentProcess())
+
+            using (ProcessModule curModule = curProcess.MainModule)
+
+            {
+
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+
+                    GetModuleHandle(curModule.ModuleName), 0);
+
+            }
+
+        }
+
+
+        private delegate IntPtr LowLevelKeyboardProc(
+
+            int nCode, IntPtr wParam, IntPtr lParam);
+
+
+        private static IntPtr HookCallback(
+
+            int nCode, IntPtr wParam, IntPtr lParam)
+
+        {
+
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                LevelSelectModel.KeyDefinitions keysDef;
+                Debug.WriteLine(vkCode);
+                for (int i = 0; i < LevelSettingsHotkeys.Count(); i++)
+                {
+                    if (Enum.TryParse(LevelSettingsHotkeys[i], out keysDef))
+                    {
+                        if (vkCode == (int)keysDef)
+                        {
+                            KeyBindSave(i);   
+                        }
+                    }
+                }
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        public static void KeyBindSave(int index)
+        {
+            var fileContents = File.ReadAllLines(levelSelectModel.filePath);
+            fileContents[0] = "\0\0\0\0\0\0\0\0" + LevelSelectModel.Levels.FirstOrDefault(x => x.Value == HotkeyedSettingsLevels[index]).Value;
+            fileContents[1] = LevelSelectModel.Levels.FirstOrDefault(x => x.Value == HotkeyedSettingsLevels[index]).Key;
+            File.WriteAllLines(levelSelectModel.filePath, fileContents);
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            
+            var fileContents = File.ReadAllLines(levelSelectModel.filePath);
+            fileContents[0] = "\0\0\0\0\0\0\0\0" + LevelSelectModel.Levels.FirstOrDefault(x => x.Value == comboBox.SelectedValue.ToString()).Value;
+            fileContents[1] = LevelSelectModel.Levels.FirstOrDefault(x => x.Value == comboBox.SelectedValue.ToString()).Key;
+            File.WriteAllLines(levelSelectModel.filePath, fileContents);
+            lblSaved.Content = "Saved!";
+            TimedAction.ExecuteWithDelay(new Action(delegate { lblSaved.Content = ""; }), TimeSpan.FromSeconds(2));
+            
+        }
     }
+
 }
+

@@ -1,8 +1,10 @@
 ﻿using LevelSelect.Model;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,34 +25,35 @@ namespace LevelSelect.UI
     /// </summary>
     public partial class LevelSelectSettings : Window
     {
-        public LevelSelectSettings(List<string> _levelHotkeys)
+        public LevelSelectSettings(LevelSelectModel levelSelectModel)
         {
             InitializeComponent();
 
             comboBox1.ItemsSource = LevelSelectModel.Levels.Values;
             comboBox1.SelectedIndex = 0;
             comboBox2.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox2.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 1;
             comboBox3.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox3.SelectedIndex = 0;
+            comboBox3.SelectedIndex = 2;
             comboBox4.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox4.SelectedIndex = 0;
+            comboBox4.SelectedIndex = 3;
             comboBox5.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox5.SelectedIndex = 0;
+            comboBox5.SelectedIndex = 4;
             comboBox6.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox6.SelectedIndex = 0;
+            comboBox6.SelectedIndex = 5;
             comboBox7.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox7.SelectedIndex = 0;
+            comboBox7.SelectedIndex = 6;
             comboBox8.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox8.SelectedIndex = 0;
+            comboBox8.SelectedIndex = 7;
             comboBox9.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox9.SelectedIndex = 0;
+            comboBox9.SelectedIndex = 8;
             comboBox10.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox10.SelectedIndex = 0;
+            comboBox10.SelectedIndex = 9;
             comboBox11.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox11.SelectedIndex = 0;
+            comboBox11.SelectedIndex = 10;
             comboBox12.ItemsSource = LevelSelectModel.Levels.Values;
-            comboBox12.SelectedIndex = 0;
+            comboBox12.SelectedIndex = 11;
+            lblFileSelection.Content = levelSelectModel.fileName;
 
             XmlDocument doc = new XmlDocument();
             try
@@ -83,7 +86,7 @@ namespace LevelSelect.UI
                 textBox12.Text = hotkeysList[11].Attributes["key"].InnerText;
                 comboBox12.SelectedItem = hotkeysList[11].Attributes["level"].InnerText;
 
-                if (!_levelHotkeys.Any())
+                if (!levelSelectModel.LevelHotkeys.Any())
                 {
                     LevelHotkeys = new List<string>();
                     LevelHotkeys.Add(hotkeysList[0].Attributes["key"].InnerText);
@@ -101,7 +104,7 @@ namespace LevelSelect.UI
                 }
                 else
                 {
-                    LevelHotkeys = _levelHotkeys;
+                    LevelHotkeys = levelSelectModel.LevelHotkeys;
                 }
             }
             // keep blank to prevent crash on empty file or not enough elements found
@@ -127,6 +130,7 @@ namespace LevelSelect.UI
         }
 
         public List<string> LevelHotkeys { get; set; }
+        public LevelSelector ParentWindow { get; internal set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -184,7 +188,13 @@ namespace LevelSelect.UI
                 entryElement.SetAttribute("key", textBox12.Text);
                 entryElement.SetAttribute("level", comboBox12.SelectedItem.ToString());
                 doc.DocumentElement.AppendChild(entryElement);
-
+            if (lblFileSelection.Content.ToString() != "Pick a File")
+            {
+                entryElement = doc.CreateElement("File");
+                entryElement.SetAttribute("filename", LevelSelector.levelSelectModel.fileName);
+                entryElement.SetAttribute("filepath", LevelSelector.levelSelectModel.filePath);
+                doc.DocumentElement.AppendChild(entryElement);
+            }
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             // Save the document to a file and auto-indent the output.
@@ -197,15 +207,10 @@ namespace LevelSelect.UI
         }
 
         #region textbox handlers
+
         private string FormatKey(KeyEventArgs e)
         {
-            if (e.Key >= Key.D0 && e.Key <= Key.D9)
-            {
-                string returnKey = e.Key.ToString();
-                var changeOutput = returnKey.ToCharArray();
-                return changeOutput[1].ToString();
-            }
-            else if (e.Key >= Key.F1 && e.Key <= Key.F12)
+            if (e.Key >= Key.F1 && e.Key <= Key.F12)
             {
                 return e.Key.ToString();
             }
@@ -215,7 +220,49 @@ namespace LevelSelect.UI
             }
             else
             {
-                return e.Key.ToString();
+                switch(e.Key)
+                {
+                    case Key.D0:
+                    case Key.D1:
+                    case Key.D2:
+                    case Key.D3:
+                    case Key.D4:
+                    case Key.D5:
+                    case Key.D6:
+                    case Key.D7:
+                    case Key.D8:
+                    case Key.D9:
+                    case Key.OemTilde:
+                    case Key.NumPad0:
+                    case Key.NumPad1:
+                    case Key.NumPad2:
+                    case Key.NumPad3:
+                    case Key.NumPad4:
+                    case Key.NumPad5:
+                    case Key.NumPad6:
+                    case Key.NumPad7:
+                    case Key.NumPad8:
+                    case Key.NumPad9:
+                    case Key.OemBackslash:
+                    case Key.Multiply:
+                    case Key.Subtract:
+                    case Key.Add:
+                    case Key.Divide:
+                    case Key.Decimal:
+                    case Key.OemComma:
+                    case Key.OemCloseBrackets:
+                    case Key.OemOpenBrackets:
+                    case Key.OemPipe:
+                    case Key.OemSemicolon:
+                    case Key.OemQuotes:
+                    case Key.OemQuestion:
+                    case Key.OemPlus:
+                    case Key.OemPeriod:
+                    case Key.OemMinus:
+                        return "";
+                    default:
+                        return e.Key.ToString();
+                }
             }
         }
 
@@ -242,7 +289,7 @@ namespace LevelSelect.UI
 
         private void textBox1_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox1.Text == "" && LevelHotkeys[0] == null)
+            if (textBox1.Text == "" && LevelHotkeys[0] == "")
             {
                 textBox1.Text = "Press a Key";
                 LevelHotkeys[0] = "Press a Key";
@@ -276,9 +323,13 @@ namespace LevelSelect.UI
             {
                 textBox1.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox1.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -289,7 +340,7 @@ namespace LevelSelect.UI
 
         private void textBox2_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox2.Text == "" && LevelHotkeys[1] == null)
+            if (textBox2.Text == "" && LevelHotkeys[1] == "")
             {
                 textBox2.Text = "Press a Key";
                 LevelHotkeys[1] = "Press a Key";
@@ -323,9 +374,13 @@ namespace LevelSelect.UI
             {
                 textBox2.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox2.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -336,7 +391,7 @@ namespace LevelSelect.UI
 
         private void textBox3_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox3.Text == "" && LevelHotkeys[2] == null)
+            if (textBox3.Text == "" && LevelHotkeys[2] == "")
             {
                 textBox3.Text = "Press a Key";
                 LevelHotkeys[2] = "Press a Key";
@@ -370,9 +425,13 @@ namespace LevelSelect.UI
             {
                 textBox3.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox3.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -383,7 +442,7 @@ namespace LevelSelect.UI
 
         private void textBox4_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox4.Text == "" && LevelHotkeys[3] == null)
+            if (textBox4.Text == "" && LevelHotkeys[3] == "")
             {
                 textBox4.Text = "Press a Key";
                 LevelHotkeys[3] = "Press a Key";
@@ -417,9 +476,13 @@ namespace LevelSelect.UI
             {
                 textBox4.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox4.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -430,7 +493,7 @@ namespace LevelSelect.UI
 
         private void textBox5_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox5.Text == "" && LevelHotkeys[4] == null)
+            if (textBox5.Text == "" && LevelHotkeys[4] == "")
             {
                 textBox5.Text = "Press a Key";
                 LevelHotkeys[4] = "Press a Key";
@@ -464,9 +527,13 @@ namespace LevelSelect.UI
             {
                 textBox5.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox5.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -477,7 +544,7 @@ namespace LevelSelect.UI
 
         private void textBox6_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox6.Text == "" && LevelHotkeys[5] == null)
+            if (textBox6.Text == "" && LevelHotkeys[5] == "")
             {
                 textBox6.Text = "Press a Key";
                 LevelHotkeys[5] = "Press a Key";
@@ -511,9 +578,13 @@ namespace LevelSelect.UI
             {
                 textBox6.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox6.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -524,7 +595,7 @@ namespace LevelSelect.UI
 
         private void textBox7_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox7.Text == "" && LevelHotkeys[6] == null)
+            if (textBox7.Text == "" && LevelHotkeys[6] == "")
             {
                 textBox7.Text = "Press a Key";
                 LevelHotkeys[6] = "Press a Key";
@@ -558,9 +629,13 @@ namespace LevelSelect.UI
             {
                 textBox7.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox7.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -571,7 +646,7 @@ namespace LevelSelect.UI
 
         private void textBox8_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox8.Text == "" && LevelHotkeys[7] == null)
+            if (textBox8.Text == "" && LevelHotkeys[7] == "")
             {
                 textBox8.Text = "Press a Key";
                 LevelHotkeys[7] = "Press a Key";
@@ -605,9 +680,13 @@ namespace LevelSelect.UI
             {
                 textBox8.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox8.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -618,7 +697,7 @@ namespace LevelSelect.UI
 
         private void textBox9_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox9.Text == "" && LevelHotkeys[8] == null)
+            if (textBox9.Text == "" && LevelHotkeys[8] == "")
             {
                 textBox9.Text = "Press a Key";
                 LevelHotkeys[8] = "Press a Key";
@@ -652,9 +731,13 @@ namespace LevelSelect.UI
             {
                 textBox9.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox9.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -665,7 +748,7 @@ namespace LevelSelect.UI
 
         private void textBox10_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox10.Text == "" && LevelHotkeys[9] == null)
+            if (textBox10.Text == "" && LevelHotkeys[9] == "")
             {
                 textBox10.Text = "Press a Key";
                 LevelHotkeys[9] = "Press a Key";
@@ -699,9 +782,13 @@ namespace LevelSelect.UI
             {
                 textBox10.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox10.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -712,7 +799,7 @@ namespace LevelSelect.UI
 
         private void textBox11_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox11.Text == "" && LevelHotkeys[10] == null)
+            if (textBox11.Text == "" && LevelHotkeys[10] == "")
             {
                 textBox11.Text = "Press a Key";
                 LevelHotkeys[10] = "Press a Key";
@@ -746,9 +833,13 @@ namespace LevelSelect.UI
             {
                 textBox11.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox11.Text = "";
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
 
@@ -759,7 +850,7 @@ namespace LevelSelect.UI
 
         private void textBox12_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox12.Text == "" && LevelHotkeys[11] == null)
+            if (textBox12.Text == "" && LevelHotkeys[11] == "")
             {
                 textBox12.Text = "Press a Key";
                 LevelHotkeys[11] = "Press a Key";
@@ -793,11 +884,27 @@ namespace LevelSelect.UI
             {
                 textBox12.Text = keyPressed;
             }
-            else
+            else if (keyPressed != "")
             {
                 textBox12.Text = "";
             }
+            else
+            {
+                e.Handled = true;
+            }
         }
         #endregion
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                lblFileSelection.Content = openFileDialog.SafeFileName;
+                LevelSelector.levelSelectModel.fileName = openFileDialog.SafeFileName;
+                LevelSelector.levelSelectModel.filePath = openFileDialog.FileName;
+            }
+                
+        }
     }
 }
