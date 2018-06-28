@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LevelSelect"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Icon="..\430866397401186304_rpz_icon.ico"
         Title="MainWindow" Height="282.353" Width="318.487">
     <Grid>
         <Grid.ColumnDefinitions>

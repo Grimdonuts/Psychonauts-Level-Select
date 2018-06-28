@@ -5,32 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LevelSelect.UI"
         mc:Ignorable="d"
-        Title="LevelSelectSettings" Height="307.161" Width="608.403">
+        WindowStartupLocation="CenterScreen"
+        Title="LevelSelectSettings" Icon="..\430866397401186304_rpz_icon.ico" Height="307.161" Width="608.403">
     <Grid>
         <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="27,28,0,0" VerticalAlignment="Top" Width="120" Text="Please Select" />
-        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="167,27,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox1_GotFocus" LostFocus="textBox1_LostFocus" KeyDown="textBox1_KeyDown"/>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="167,27,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox2" HorizontalAlignment="Left" Margin="27,56,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="167,55,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" KeyDown="textBox2_KeyDown" GotFocus="textBox2_GotFocus" LostFocus="textBox2_LostFocus"/>
+        <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="167,55,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" KeyDown="textBox_KeyDown" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus"/>
         <ComboBox x:Name="comboBox3" HorizontalAlignment="Left" Margin="27,84,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="167,83,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" KeyDown="textBox3_KeyDown" GotFocus="textBox3_GotFocus" LostFocus="textBox3_LostFocus"/>
+        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="167,83,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" KeyDown="textBox_KeyDown" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus"/>
         <ComboBox x:Name="comboBox4" HorizontalAlignment="Left" Margin="27,112,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox4" HorizontalAlignment="Left" Height="23" Margin="167,111,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox4_GotFocus" LostFocus="textBox4_LostFocus" KeyDown="textBox4_KeyDown"/>
+        <TextBox x:Name="textBox4" HorizontalAlignment="Left" Height="23" Margin="167,111,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox5" HorizontalAlignment="Left" Margin="27,140,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="167,139,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox5_GotFocus" LostFocus="textBox5_LostFocus" KeyDown="textBox5_KeyDown"/>
+        <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="167,139,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox6" HorizontalAlignment="Left" Margin="27,168,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="167,167,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox6_GotFocus" LostFocus="textBox6_LostFocus" KeyDown="textBox6_KeyDown"/>
+        <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="167,167,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox7" HorizontalAlignment="Left" Margin="313,28,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="453,27,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox7_GotFocus" LostFocus="textBox7_LostFocus" KeyDown="textBox7_KeyDown"/>
+        <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="453,27,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox8" HorizontalAlignment="Left" Margin="313,56,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox8" HorizontalAlignment="Left" Height="23" Margin="453,55,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox8_GotFocus" LostFocus="textBox8_LostFocus" KeyDown="textBox8_KeyDown"/>
+        <TextBox x:Name="textBox8" HorizontalAlignment="Left" Height="23" Margin="453,55,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox9" HorizontalAlignment="Left" Margin="313,84,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox9" HorizontalAlignment="Left" Height="23" Margin="453,83,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox9_GotFocus" LostFocus="textBox9_LostFocus" KeyDown="textBox9_KeyDown"/>
+        <TextBox x:Name="textBox9" HorizontalAlignment="Left" Height="23" Margin="453,83,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox10" HorizontalAlignment="Left" Margin="313,112,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox10" HorizontalAlignment="Left" Height="23" Margin="453,111,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox10_GotFocus" LostFocus="textBox10_LostFocus" KeyDown="textBox10_KeyDown"/>
+        <TextBox x:Name="textBox10" HorizontalAlignment="Left" Height="23" Margin="453,111,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox11" HorizontalAlignment="Left" Margin="313,140,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox11" HorizontalAlignment="Left" Height="23" Margin="453,139,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox11_GotFocus" LostFocus="textBox11_LostFocus" KeyDown="textBox11_KeyDown"/>
+        <TextBox x:Name="textBox11" HorizontalAlignment="Left" Height="23" Margin="453,139,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <ComboBox x:Name="comboBox12" HorizontalAlignment="Left" Margin="313,168,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBox12" HorizontalAlignment="Left" Height="23" Margin="453,167,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox12_GotFocus" LostFocus="textBox12_LostFocus" KeyDown="textBox12_KeyDown"/>
+        <TextBox x:Name="textBox12" HorizontalAlignment="Left" Height="23" Margin="453,167,0,0" TextWrapping="Wrap" Text="Press a Key" VerticalAlignment="Top" Width="120" GotFocus="textBox_GotFocus" LostFocus="textBox_LostFocus" KeyDown="textBox_KeyDown"/>
         <Button Content="Save &amp; Close" HorizontalAlignment="Left" Margin="259,238,0,0" VerticalAlignment="Top" Width="78" Click="Button_Click" RenderTransformOrigin="0.476,3.329"/>
         <Label x:Name="lblFileSelection" Content="Pick a File" HorizontalAlignment="Left" Margin="27,203,0,0" VerticalAlignment="Top" Width="120"/>
         <Button Content="Set" HorizontalAlignment="Left" Margin="147,206,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>

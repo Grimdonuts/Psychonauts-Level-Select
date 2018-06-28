@@ -127,6 +127,23 @@ namespace LevelSelect.UI
 
             }
 
+            if (levelSelectModel.fileName == "Pick a File in Settings")
+            {
+                textBox1.IsEnabled = false;
+                textBox2.IsEnabled = false;
+                textBox3.IsEnabled = false;
+                textBox4.IsEnabled = false;
+                textBox5.IsEnabled = false;
+                textBox6.IsEnabled = false;
+                textBox7.IsEnabled = false;
+                textBox8.IsEnabled = false;
+                textBox9.IsEnabled = false;
+                textBox10.IsEnabled = false;
+                textBox11.IsEnabled = false;
+                textBox12.IsEnabled = false;
+                lblFileSelection.Content = "Pick a File";
+            }
+
         }
 
         public List<string> LevelHotkeys { get; set; }
@@ -188,6 +205,7 @@ namespace LevelSelect.UI
                 entryElement.SetAttribute("key", textBox12.Text);
                 entryElement.SetAttribute("level", comboBox12.SelectedItem.ToString());
                 doc.DocumentElement.AppendChild(entryElement);
+
             if (lblFileSelection.Content.ToString() != "Pick a File")
             {
                 entryElement = doc.CreateElement("File");
@@ -201,9 +219,59 @@ namespace LevelSelect.UI
             XmlWriter writer = XmlWriter.Create("Settings.xml", settings);
             doc.Save(writer);
             writer.Close();
+            Close();
+        }
 
-            this.Close();
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (openFileDialog.SafeFileName == "SavedGame0")
+                {
+                    MessageBox.Show("Pick a different save file. the autosave file has known issues.");
+                }
+                else if (!openFileDialog.SafeFileName.Contains("SavedGame"))
+                {
+                    MessageBox.Show("Not a recognized save file.");
+                }
+                else
+                {
+                    if (ProperFile(openFileDialog.FileName))
+                    {
+                        lblFileSelection.Content = openFileDialog.SafeFileName;
+                        LevelSelector.levelSelectModel.fileName = openFileDialog.SafeFileName;
+                        LevelSelector.levelSelectModel.filePath = openFileDialog.FileName;
 
+                        textBox1.IsEnabled = true;
+                        textBox2.IsEnabled = true;
+                        textBox3.IsEnabled = true;
+                        textBox4.IsEnabled = true;
+                        textBox5.IsEnabled = true;
+                        textBox6.IsEnabled = true;
+                        textBox7.IsEnabled = true;
+                        textBox8.IsEnabled = true;
+                        textBox9.IsEnabled = true;
+                        textBox10.IsEnabled = true;
+                        textBox11.IsEnabled = true;
+                        textBox12.IsEnabled = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Not a valid save file, pick one that exists in your profile within Psychonauts and not the autosave.");
+                    }
+                }
+            }
+        }
+
+        public bool ProperFile(string fileName)
+        {
+            var fileContents = File.ReadAllLines(fileName);
+            if (fileContents.Count() < 2)
+            {
+                return false;
+            }
+            return true;
         }
 
         #region textbox handlers
@@ -222,16 +290,6 @@ namespace LevelSelect.UI
             {
                 switch(e.Key)
                 {
-                    case Key.D0:
-                    case Key.D1:
-                    case Key.D2:
-                    case Key.D3:
-                    case Key.D4:
-                    case Key.D5:
-                    case Key.D6:
-                    case Key.D7:
-                    case Key.D8:
-                    case Key.D9:
                     case Key.OemTilde:
                     case Key.NumPad0:
                     case Key.NumPad1:
@@ -282,629 +340,88 @@ namespace LevelSelect.UI
             textBox12.Text = LevelHotkeys[11];
         }
 
-        private void textBox1_GotFocus(object sender, RoutedEventArgs e)
+        private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
-            textBox1.Text = "";
-        }
-
-        private void textBox1_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox1.Text == "" && LevelHotkeys[0] == "")
+            TextBox tb = (TextBox)sender;
+            char tbNumber1 = tb.Name[tb.Name.Length - 1];
+            char tbNumber2 = tb.Name[tb.Name.Length - 2];
+            int finalTbNumber = 0;
+            if (tbNumber2 != 'x')
             {
-                textBox1.Text = "Press a Key";
-                LevelHotkeys[0] = "Press a Key";
+                string finalNumber = Char.GetNumericValue(tbNumber2).ToString() + Char.GetNumericValue(tbNumber1).ToString();
+                finalTbNumber = Convert.ToInt32(finalNumber);
             }
             else
             {
-                textBox1.Text = LevelHotkeys[0];
+                finalTbNumber = (int)Char.GetNumericValue(tbNumber1);
             }
-        }
-
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
             string keyPressed = FormatKey(e);
-            if (LevelHotkeys[0] != "Press a Key" && LevelHotkeys.FirstOrDefault(x=> x == keyPressed) != keyPressed)
+            if (LevelHotkeys[finalTbNumber - 1] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
             {
-                LevelHotkeys[0] = keyPressed;
+                LevelHotkeys[finalTbNumber - 1] = keyPressed;
             }
             else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
             {
                 int index = LevelHotkeys.FindIndex(x => x == keyPressed);
                 LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[0] = keyPressed;
+                LevelHotkeys[finalTbNumber - 1] = keyPressed;
                 RefreshBoxes();
             }
             else
             {
-                LevelHotkeys[0] = keyPressed;
+                LevelHotkeys[finalTbNumber - 1] = keyPressed;
             }
-            
+
             if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
             {
-                textBox1.Text = keyPressed;
+                
+                tb.Text = keyPressed;
             }
             else if (keyPressed != "")
             {
-                textBox1.Text = "";
+                tb.Text = "";
             }
             else
             {
                 e.Handled = true;
             }
+
         }
 
-        private void textBox2_GotFocus(object sender, RoutedEventArgs e)
+        private void textBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            textBox2.Text = "";
+            TextBox tb = (TextBox)sender;
+            tb.Text = "";
         }
 
-        private void textBox2_LostFocus(object sender, RoutedEventArgs e)
+        private void textBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (textBox2.Text == "" && LevelHotkeys[1] == "")
+            TextBox tb = (TextBox)sender;
+            char tbNumber1 = tb.Name[tb.Name.Length - 1];
+            char tbNumber2 = tb.Name[tb.Name.Length - 2];
+            int finalTbNumber = 0;
+            if (tbNumber2 != 'x')
             {
-                textBox2.Text = "Press a Key";
-                LevelHotkeys[1] = "Press a Key";
+                string finalNumber = Char.GetNumericValue(tbNumber2).ToString() + Char.GetNumericValue(tbNumber1).ToString();
+                finalTbNumber = Convert.ToInt32(finalNumber);
             }
             else
             {
-                textBox2.Text = LevelHotkeys[1];
+                finalTbNumber = (int)Char.GetNumericValue(tbNumber1);
             }
-        }
-
-        private void textBox2_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[1] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
+            if (tb.Text == "" && LevelHotkeys[finalTbNumber - 1] == "")
             {
-                LevelHotkeys[1] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[1] = keyPressed;
-                RefreshBoxes();
+                tb.Text = "Press a Key";
+                LevelHotkeys[finalTbNumber - 1] = "Press a Key";
             }
             else
             {
-                LevelHotkeys[1] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox2.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox2.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
+                tb.Text = LevelHotkeys[finalTbNumber - 1];
             }
         }
 
-        private void textBox3_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox3.Text = "";
-        }
-
-        private void textBox3_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox3.Text == "" && LevelHotkeys[2] == "")
-            {
-                textBox3.Text = "Press a Key";
-                LevelHotkeys[2] = "Press a Key";
-            }
-            else
-            {
-                textBox3.Text = LevelHotkeys[2];
-            }
-        }
-
-        private void textBox3_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[2] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[2] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[2] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[2] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox3.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox3.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox4_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox4.Text = "";
-        }
-
-        private void textBox4_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox4.Text == "" && LevelHotkeys[3] == "")
-            {
-                textBox4.Text = "Press a Key";
-                LevelHotkeys[3] = "Press a Key";
-            }
-            else
-            {
-                textBox4.Text = LevelHotkeys[3];
-            }
-        }
-
-        private void textBox4_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[3] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[3] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[3] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[3] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox4.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox4.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox5_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox5.Text = "";
-        }
-
-        private void textBox5_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox5.Text == "" && LevelHotkeys[4] == "")
-            {
-                textBox5.Text = "Press a Key";
-                LevelHotkeys[4] = "Press a Key";
-            }
-            else
-            {
-                textBox5.Text = LevelHotkeys[4];
-            }
-        }
-
-        private void textBox5_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[4] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[4] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[4] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[4] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox5.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox5.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox6_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox6.Text = "";
-        }
-
-        private void textBox6_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox6.Text == "" && LevelHotkeys[5] == "")
-            {
-                textBox6.Text = "Press a Key";
-                LevelHotkeys[5] = "Press a Key";
-            }
-            else
-            {
-                textBox6.Text = LevelHotkeys[5];
-            }
-        }
-
-        private void textBox6_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[5] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[5] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[5] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[5] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox6.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox6.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox7_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox7.Text = "";
-        }
-
-        private void textBox7_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox7.Text == "" && LevelHotkeys[6] == "")
-            {
-                textBox7.Text = "Press a Key";
-                LevelHotkeys[6] = "Press a Key";
-            }
-            else
-            {
-                textBox7.Text = LevelHotkeys[6];
-            }
-        }
-
-        private void textBox7_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[6] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[6] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[6] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[6] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox7.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox7.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox8_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox8.Text = "";
-        }
-
-        private void textBox8_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox8.Text == "" && LevelHotkeys[7] == "")
-            {
-                textBox8.Text = "Press a Key";
-                LevelHotkeys[7] = "Press a Key";
-            }
-            else
-            {
-                textBox8.Text = LevelHotkeys[7];
-            }
-        }
-
-        private void textBox8_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[7] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[7] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[7] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[7] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox8.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox8.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox9_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox9.Text = "";
-        }
-
-        private void textBox9_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox9.Text == "" && LevelHotkeys[8] == "")
-            {
-                textBox9.Text = "Press a Key";
-                LevelHotkeys[8] = "Press a Key";
-            }
-            else
-            {
-                textBox9.Text = LevelHotkeys[8];
-            }
-        }
-
-        private void textBox9_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[8] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[8] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[8] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[8] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox9.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox9.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox10_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox10.Text = "";
-        }
-
-        private void textBox10_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox10.Text == "" && LevelHotkeys[9] == "")
-            {
-                textBox10.Text = "Press a Key";
-                LevelHotkeys[9] = "Press a Key";
-            }
-            else
-            {
-                textBox10.Text = LevelHotkeys[9];
-            }
-        }
-
-        private void textBox10_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[9] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[9] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[9] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[9] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox10.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox10.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox11_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox11.Text = "";
-        }
-
-        private void textBox11_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox11.Text == "" && LevelHotkeys[10] == "")
-            {
-                textBox11.Text = "Press a Key";
-                LevelHotkeys[10] = "Press a Key";
-            }
-            else
-            {
-                textBox11.Text = LevelHotkeys[10];
-            }
-        }
-
-        private void textBox11_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[10] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[10] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[10] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[10] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox11.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox11.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void textBox12_GotFocus(object sender, RoutedEventArgs e)
-        {
-            textBox12.Text = "";
-        }
-
-        private void textBox12_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (textBox12.Text == "" && LevelHotkeys[11] == "")
-            {
-                textBox12.Text = "Press a Key";
-                LevelHotkeys[11] = "Press a Key";
-            }
-            else
-            {
-                textBox12.Text = LevelHotkeys[11];
-            }
-        }
-
-        private void textBox12_KeyDown(object sender, KeyEventArgs e)
-        {
-            string keyPressed = FormatKey(e);
-            if (LevelHotkeys[11] != "Press a Key" && LevelHotkeys.FirstOrDefault(x => x == keyPressed) != keyPressed)
-            {
-                LevelHotkeys[11] = keyPressed;
-            }
-            else if (LevelHotkeys.FirstOrDefault(x => x == keyPressed) == keyPressed)
-            {
-                int index = LevelHotkeys.FindIndex(x => x == keyPressed);
-                LevelHotkeys[index] = "Press a Key";
-                LevelHotkeys[11] = keyPressed;
-                RefreshBoxes();
-            }
-            else
-            {
-                LevelHotkeys[11] = keyPressed;
-            }
-
-            if (e.Key >= Key.F1 && e.Key <= Key.F12 || e.SystemKey == Key.F10)
-            {
-                textBox12.Text = keyPressed;
-            }
-            else if (keyPressed != "")
-            {
-                textBox12.Text = "";
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
+       
         #endregion
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                lblFileSelection.Content = openFileDialog.SafeFileName;
-                LevelSelector.levelSelectModel.fileName = openFileDialog.SafeFileName;
-                LevelSelector.levelSelectModel.filePath = openFileDialog.FileName;
-            }
-                
-        }
     }
 }

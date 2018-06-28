@@ -52,7 +52,7 @@ namespace LevelSelect.UI
                 btnSave.IsEnabled = false;
             }
             _hookID = SetHook(_proc);
-           // UnhookWindowsHookEx(_hookID);
+
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -86,20 +86,21 @@ namespace LevelSelect.UI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+            UnhookWindowsHookEx(_hookID);
             levelSelectModel.LevelHotkeys = LevelSettingsHotkeys;
             LevelSelectSettings levelSettings = new LevelSelectSettings(levelSelectModel);
             levelSettings.Closed += LevelSettingsClosed;
             levelSettings.ShowDialog();
 
-            //var fileContents = File.ReadAllLines("C:/Program Files (x86)/Steam/steamapps/common/Psychonauts/Profiles/Profile 2/SavedGame0");
-            //fileContents[1] = LevelSelectModel.Levels.FirstOrDefault(x=> x.Value == comboBox.SelectedValue.ToString()).Key;
-            //File.WriteAllLines("C:/Program Files (x86)/Steam/steamapps/common/Psychonauts/Profiles/Profile 2/SavedGame0", fileContents);
         }
 
         public void LevelSettingsClosed(object sender, System.EventArgs e)
         {
             LoadFromFile();
+            if (levelSelectModel.fileName != "Pick a File in Settings")
+            {
+                btnSave.IsEnabled = true;
+            }
             lblFile.Content = "Currently Selected File: " + levelSelectModel.fileName;
             int index = HotkeyedSettingsLevels.IndexOf(comboBox.SelectedItem.ToString());
             if (index != -1)
@@ -110,6 +111,7 @@ namespace LevelSelect.UI
             {
                 label1.Content = "Hotkey: None";
             }
+            _hookID = SetHook(_proc);
 
         }
 
@@ -167,7 +169,7 @@ namespace LevelSelect.UI
                 {
                     levelSelectModel.fileName = "Pick a File in Settings";
                 }
-                
+
             }
         }
 
@@ -185,44 +187,25 @@ namespace LevelSelect.UI
         }
 
         private const int WH_KEYBOARD_LL = 13;
-
         private const int WM_KEYDOWN = 0x0100;
-
         private static LowLevelKeyboardProc _proc = HookCallback;
-
         private static IntPtr _hookID = IntPtr.Zero;
 
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
-
         {
-
             using (Process curProcess = Process.GetCurrentProcess())
-
             using (ProcessModule curModule = curProcess.MainModule)
-
             {
-
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
-
-                    GetModuleHandle(curModule.ModuleName), 0);
-
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
             }
-
         }
 
 
-        private delegate IntPtr LowLevelKeyboardProc(
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-            int nCode, IntPtr wParam, IntPtr lParam);
-
-
-        private static IntPtr HookCallback(
-
-            int nCode, IntPtr wParam, IntPtr lParam)
-
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
 
             {
@@ -235,7 +218,7 @@ namespace LevelSelect.UI
                     {
                         if (vkCode == (int)keysDef)
                         {
-                            KeyBindSave(i);   
+                            KeyBindSave(i);
                         }
                     }
                 }
@@ -253,14 +236,14 @@ namespace LevelSelect.UI
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            
+
             var fileContents = File.ReadAllLines(levelSelectModel.filePath);
             fileContents[0] = "\0\0\0\0\0\0\0\0" + LevelSelectModel.Levels.FirstOrDefault(x => x.Value == comboBox.SelectedValue.ToString()).Value;
             fileContents[1] = LevelSelectModel.Levels.FirstOrDefault(x => x.Value == comboBox.SelectedValue.ToString()).Key;
             File.WriteAllLines(levelSelectModel.filePath, fileContents);
             lblSaved.Content = "Saved!";
             TimedAction.ExecuteWithDelay(new Action(delegate { lblSaved.Content = ""; }), TimeSpan.FromSeconds(2));
-            
+
         }
     }
 
